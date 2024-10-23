@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Menu</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-image: url('https://github.com/AMDxGit/Hackathon/blob/a983c3df69cbfac70fe92fdda6dbe62746ffc4b4/bg1.png?raw=true');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-color: #f09c1e;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            width: 100%;
+            max-width: 600px; 
+            margin: 50px auto;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.048);
+            box-sizing: border-box;
+        }
+        h1 {
+            color: #000000;
+        }
+        input[type="text"], input[type="password"], input[type="email"], input[type="number"] {
+            width: 80%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            background-color: #f09c1e;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #f09c1e;
+        }
+        .game-list {
+            margin-top: 30px;
+        }
+        .game-list button {
+            width: 80%;
+            margin-bottom: 10px;
+            background-color: #f09c1e;
+        }
+        .game-list button:hover {
+            background-color: #000000;
+        }
+
+        /* Updated Minesweeper Styles */
+        .minesweeper-game {
+            display: none;
+        }
+        .minesweeper-grid {
+            display: inline-grid;
+            grid-template-columns: repeat(10, 40px);
+            grid-template-rows: repeat(10, 40px);
+            gap: 2px;
+            margin: 20px auto;
+            justify-content: center;
+            background-color: #ddd;
+            padding: 5px;
+            border-radius: 4px;
+        }
+        .minesweeper-grid div {
+            width: 40px;
+            height: 40px;
+            background-color: #ccc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+            cursor: pointer;
+            border: 1px solid #999;
+            box-sizing: border-box;
+        }
+        .minesweeper-grid div.revealed {
+            background-color: #eee;
+            cursor: not-allowed;
+        }
+        .minesweeper-grid div.mine {
+            background-color: red;
+            color: white;
+        }
+
+        /* Updated Sudoku Styles */
+        .sudoku-game {
+            display: none;
+        }
+        .sudoku-grid {
+            display: inline-grid;
+            grid-template-columns: repeat(9, 40px);
+            grid-template-rows: repeat(9, 40px);
+            position: center;
+            gap: 2px;
+            margin: 20px auto;
+            justify-content: center;
+            background-color: #ddd;
+            padding: 1px;
+            border-radius: 4px;
+        }
+        .sudoku-grid input {
+            width: 40px;
+            height: 40px;
+            text-align: center;
+            font-size: 16px;
+            padding: 0;
+            border: 1px solid #999;
+            box-sizing: border-box;
+        }
+
+        .tic-tac-toe-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-template-rows: repeat(3, 100px);
+            gap: 2px;
+            margin: 20px auto;
+            width: fit-content;
+        }
+        .tic-tac-toe-grid div {
+            width: 100px;
+            height: 100px;
+            background-color: #ccc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 36px;
+            cursor: pointer;
+        }
+
+        .shop {
+            display: none;
+            margin-top: 30px;
+        }
+        .shop button {
+            background-color: #ffc107;
+        }
+        .shop button:hover {
+            background-color: #e0a800;
+        }
+
+        .game-wrapper {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Register an Account</h1>
+    <form id="registerForm">
+        <input type="text" id="username" placeholder="Username" required><br>
+        <input type="email" id="email" placeholder="Email" required><br>
+        <input type="password" id="password" placeholder="Password" required><br>
+        <button type="submit">Register</button>
+    </form>
+
+    <div class="game-list" style="display:none;">
+        <h2>Choose a Game</h2>
+        <button onclick="loadSudoku()">Play Sudoku (Game 1)</button>
+        <button onclick="loadTicTacToe()">Play Tic-Tac-Toe (Game 2)</button>
+        <button onclick="loadMinesweeper()">Play Minesweeper (Game 3)</button>
+        <button onclick="showShop()">Trading Shop</button>
+        <p id="pointsDisplay">Points: 0</p>
+        <p id="ringgitDisplay">Ringgit: 0.00</p>
+    </div>
+
+    <div class="minesweeper-game">
+        <h2>Minesweeper</h2>
+        <div class="game-wrapper">
+            <div class="minesweeper-grid" id="minesweeperGrid"></div>
+        </div>
+        <button onclick="resetMinesweeper()">Reset Game</button>
+        <button onclick="goBack()">Back</button>
+    </div>
+
+    <div class="tic-tac-toe-game" style="display:none;">
+        <h2>Tic-Tac-Toe</h2>
+        <div class="tic-tac-toe-grid" id="ticTacToeGrid"></div>
+        <button onclick="resetTicTacToe()">Reset Game</button>
+        <button onclick="goBack()">Back</button>
+        <p id="ticTacToeMessage"></p>
+    </div>
+
+    <div class="sudoku-game" style="display:none;">
+        <h2>Sudoku Game</h2>
+        <div class="game-wrapper">
+            <div class="sudoku-grid" id="sudokuGrid"></div>
+        </div>
+        <button onclick="checkSudoku()">Check Solution</button>
+        <button onclick="goBack()">Back</button>
+    </div>
+
+    <div class="shop">
+        <h2>Trading Shop</h2>
+        <p id="shopMessage"></p>
+        <button onclick="purchaseItem()">Buy Item for 10 Points</button><br>
+        <input type="number" id="withdrawAmount" placeholder="Amount to withdraw" min="1">
+        <button onclick="withdrawPoints()">Withdraw Points</button>
+        <button onclick="goBack()">Back</button>
+    </div>
+</div>
+
+<script>
+let points = 0; // Global points variable
+const tokenToRinggit = 0.005; // Conversion rate
+
+// Handle the registration form submission
+document.getElementById("registerForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+    const username = document.getElementById("username").value;
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+
+    if (username && email && password) {
+        alert("Account registered successfully!");
+        document.getElementById("registerForm").style.display = "none";
+        document.querySelector(".game-list").style.display = "block";
+        updatePointsDisplay();
+    }
+});
+
+// Minesweeper game logic
+let minesweeperActive = true;
+const gridSize = 10;
+const mineCount = 10;
+let grid = [];
+
+function loadMinesweeper() {
+    document.querySelector(".game-list").style.display = "none";
+    document.querySelector(".minesweeper-game").style.display = "block";
+    resetMinesweeper();
+}
+
+function resetMinesweeper() {
+    minesweeperActive = true;
+    grid = generateMinesweeperGrid();
+    const minesweeperGrid = document.getElementById('minesweeperGrid');
+    minesweeperGrid.innerHTML = ''; // Clear any previous grid
+
+    for (let row = 0; row < gridSize; row++) {
+        for (let col = 0; col < gridSize; col++) {
+            const cell = document.createElement('div');
+            cell.addEventListener('click', () => revealCell(row, col, grid));
+            minesweeperGrid.appendChild(cell);
+        }
+    }
+}
+
+function generateMinesweeperGrid() {
+    const grid = Array.from({ length: gridSize }, () => Array(gridSize).fill(0));
+    let minesPlaced = 0;
+
+    while (minesPlaced < mineCount) {
+        const row = Math.floor(Math.random() * gridSize);
+        const col = Math.floor(Math.random() * gridSize);
+        if (grid[row][col] !== 'mine') {
+            grid[row][col] = 'mine';
+            minesPlaced++;
+
+            // Increment surrounding cells
+            for (let r = row - 1; r <= row + 1; r++) {
+                for (let c = col - 1; c <= col + 1; c++) {
+                    if (r >= 0 && r < gridSize && c >= 0 && c < gridSize && grid[r][c] !== 'mine') {
+                        grid[r][c]++;
+                    }
+                }
+            }
+        }
+    }
+
+    return grid;
+}
+
+function revealCell(row, col, grid) {
+    if (!minesweeperActive) return;  // Disable clicking if the game is over
+    const cellIndex = row * gridSize + col;
+    const cell = document.querySelectorAll('.minesweeper-grid div')[cellIndex];
+
+    // Check if the cell is already revealed
+    if (cell.classList.contains('revealed')) return;
+
+    // Reveal the cell
+    cell.classList.add('revealed');
+
+    if (grid[row][col] === 'mine') {
+        cell.classList.add('mine');
+        cell.innerText = '💣';
+        gameOver();  // Stop the game if a mine is hit
+    } else {
+        // Display the number if the cell is not empty
+        if (grid[row][col] > 0) {
+            cell.innerText = grid[row][col];
+        }
+
+        // If the cell is empty, reveal adjacent cells recursively
+        if (grid[row][col] === 0) {
+            for (let r = row - 1; r <= row + 1; r++) {
+                for (let c = col - 1; c <= col + 1; c++) {
+                    if (r >= 0 && r < gridSize && c >= 0 && c < gridSize) {
+                        revealCell(r, c, grid);  // Recursively reveal neighbors
+                    }
+                }
+            }
+        }
+    }
+}
+
+function gameOver() {
+    minesweeperActive = false;
+    alert("Game Over! You hit a mine.");
+    // Reveal all mines on the board
+    const cells = document.querySelectorAll('.minesweeper-grid div');
+    for (let i = 0; i < gridSize; i++) {
+        for (let j = 0; j < gridSize; j++) {
+            if (grid[i][j] === 'mine') {
+                const mineCell = cells[i * gridSize + j];
+                mineCell.classList.add('mine');
+                mineCell.innerText = '💣';
+            }
+        }
+    }
+}
+
+// Function to add points
+function addPoints(pointsToAdd) {
+    points += pointsToAdd;
+    updatePointsDisplay();
+}
+
+// Tic-Tac-Toe game logic
+let ticTacToeBoard = ['', '', '', '', '', '', '', '', ''];
+let currentPlayer = 'X';
+let ticTacToeActive = true;
+
+function loadTicTacToe() {
+    document.querySelector(".game-list").style.display = "none";
+    document.querySelector(".tic-tac-toe-game").style.display = "block";
+
+    const ticTacToeGrid = document.getElementById('ticTacToeGrid');
+    ticTacToeGrid.innerHTML = ''; // Clear any previous grid
+    ticTacToeBoard.fill(''); // Reset the board
+
+    for (let i = 0; i < 9; i++) {
+        const cell = document.createElement('div');
+        cell.addEventListener('click', () => playerMove(i));
+        ticTacToeGrid.appendChild(cell);
+    }
+
+    document.getElementById('ticTacToeMessage').innerText = `Current Player: ${currentPlayer}`;
+}
+
+function playerMove(index) {
+    if (ticTacToeBoard[index] !== '' || !ticTacToeActive) return;
+    ticTacToeBoard[index] = currentPlayer;
+    renderTicTacToeBoard();
+    checkTicTacToeResult();
+    if (ticTacToeActive) {
+        aiMove();
+    }
+}
+
+function renderTicTacToeBoard() {
+    const cells = document.querySelectorAll('#ticTacToeGrid div');
+    cells.forEach((cell, index) => {
+        cell.innerText = ticTacToeBoard[index];
+    });
+    document.getElementById('ticTacToeMessage').innerText = `Current Player: ${currentPlayer}`;
+}
+
+function aiMove() {
+    const emptyIndices = ticTacToeBoard.map((val, index) => val === '' ? index : null).filter(val => val !== null);
+    if (emptyIndices.length > 0) {
+        const randomIndex = emptyIndices[Math.floor(Math.random() * emptyIndices.length)];
+        ticTacToeBoard[randomIndex] = 'O';
+        renderTicTacToeBoard();
+        checkTicTacToeResult();
+    }
+}
+
+function checkTicTacToeResult() {
+    const winningCombinations = [
+        [0, 1, 2], [3, 4, 5], [6, 7, 8], // Horizontal
+        [0, 3, 6], [1, 4, 7], [2, 5, 8], // Vertical
+        [0, 4, 8], [2, 4, 6]            // Diagonal
+    ];
+    
+    for (let combination of winningCombinations) {
+        const [a, b, c] = combination;
+        if (ticTacToeBoard[a] && ticTacToeBoard[a] === ticTacToeBoard[b] && ticTacToeBoard[a] === ticTacToeBoard[c]) {
+            alert(`Player ${ticTacToeBoard[a]} wins!`);
+            addPoints(10); // Add points for winning
+            ticTacToeActive = false;
+            return;
+        }
+    }
+
+    if (!ticTacToeBoard.includes('')) {
+        alert("It's a draw!");
+        ticTacToeActive = false;
+    }
+}
+
+function resetTicTacToe() {
+    ticTacToeBoard.fill('');
+    currentPlayer = 'X';
+    ticTacToeActive = true;
+    loadTicTacToe();
+}
+
+// Sudoku functions
+function loadSudoku() {
+    document.querySelector(".game-list").style.display = "none";
+    document.querySelector(".sudoku-game").style.display = "block";
+
+    const sudokuGrid = document.getElementById('sudokuGrid');
+    sudokuGrid.innerHTML = ''; // Clear any previous grid
+
+    const puzzle = [
+        [5, 3, 0, 0, 7, 0, 0, 0, 0],
+        [6, 0, 0, 1, 9, 5, 0, 0, 0],
+        [0, 9, 8, 0, 0, 0, 0, 6, 0],
+        [8, 0, 0, 0, 6, 0, 0, 0, 3],
+        [4, 0, 0, 8, 0, 3, 0, 0, 1],
+        [7, 0, 0, 0, 2, 0, 0, 0, 6],
+        [0, 6, 0, 0, 0, 0, 2, 8, 0],
+        [0, 0, 0, 4, 1, 9, 0, 0, 5],
+        [0, 0, 0, 0, 8, 0, 0, 7, 9]
+    ];
+
+    for (let row = 0; row < 9; row++) {
+        for (let col = 0; col < 9; col++) {
+            const cell = document.createElement('input');
+            cell.type = 'number';
+            cell.min = 1;
+            cell.max = 9;
+            if (puzzle[row][col] !== 0) {
+                cell.value = puzzle[row][col];
+                cell.disabled = true;
+            }
+            sudokuGrid.appendChild(cell);
+        }
+    }
+}
+
+function checkSudoku() {
+    const cells = document.querySelectorAll('.sudoku-grid input');
+    const sudokuBoard = Array.from({ length: 9 }, () => Array(9).fill(0));
+
+    // Populate the sudokuBoard with user inputs
+    let isValid = true;
+    cells.forEach((cell, index) => {
+        const value = parseInt(cell.value, 10);
+        const row = Math.floor(index / 9);
+        const col = index % 9;
+
+        if (value < 1 || value > 9) {
+            isValid = false;
+            return;
+        }
+        sudokuBoard[row][col] = value;
+    });
+
+    // Check rows, columns, and 3x3 boxes
+    for (let i = 0; i < 9; i++) {
+        const rowSet = new Set();
+        const colSet = new Set();
+        const boxSet = new Set();
+
+        for (let j = 0; j < 9; j++) {
+            // Check rows
+            if (sudokuBoard[i][j] !== 0) {
+                if (rowSet.has(sudokuBoard[i][j])) {
+                    isValid = false;
+                    break;
+                }
+                rowSet.add(sudokuBoard[i][j]);
+            }
+
+            // Check columns
+            if (sudokuBoard[j][i] !== 0) {
+                if (colSet.has(sudokuBoard[j][i])) {
+                    isValid = false;
+                    break;
+                }
+                colSet.add(sudokuBoard[j][i]);
+            }
+
+            // Check 3x3 boxes
+            const boxRow = Math.floor(i / 3) * 3;
+            const boxCol = Math.floor(i % 3) * 3;
+            const boxValue = sudokuBoard[boxRow + Math.floor(j / 3)][boxCol + (j % 3)];
+
+            if (boxValue !== 0) {
+                if (boxSet.has(boxValue)) {
+                    isValid = false;
+                    break;
+                }
+                boxSet.add(boxValue);
+            }
+        }
+    }
+
+    if (isValid) {
+        alert("Sudoku solution is valid!");
+        addPoints(10); // Add points for winning
+    } else {
+        alert("Invalid Sudoku solution. Please check your inputs.");
+    }
+}
+
+// Trading Shop
+function showShop() {
+    document.querySelector(".game-list").style.display = "none";
+    document.querySelector(".shop").style.display = "block";
+    updateShopMessage();
+}
+
+function updateShopMessage() {
+    document.getElementById('shopMessage').innerText = `You have ${points} points, equivalent to ${(points * tokenToRinggit).toFixed(2)} Ringgit.`;
+}
+
+function purchaseItem() {
+    if (points >= 10) {
+        points -= 10; // Deduct points for purchasing an item
+        alert("You have purchased an item!");
+        updatePointsDisplay();
+        updateShopMessage();
+    } else {
+        alert("Not enough points to purchase this item.");
+    }
+}
+
+function withdrawPoints() {
+    const withdrawAmount = parseInt(document.getElementById('withdrawAmount').value, 10);
+    if (withdrawAmount > points) {
+        alert("You do not have enough points to withdraw this amount.");
+    } else if (withdrawAmount <= 0) {
+        alert("Please enter a valid amount to withdraw.");
+    } else {
+        points -= withdrawAmount; // Deduct points from the account
+        alert(`You have withdrawn ${withdrawAmount} points, which is ${(withdrawAmount * tokenToRinggit).toFixed(2)} Ringgit.`);
+        updatePointsDisplay();
+        updateShopMessage();
+    }
+}
+
+// Update points and Ringgit display
+function updatePointsDisplay() {
+    document.getElementById('pointsDisplay').innerText = `Points: ${points}`;
+    document.getElementById('ringgitDisplay').innerText = `Ringgit: ${(points * tokenToRinggit).toFixed(2)}`;
+}
+
+// Back to the game selection
+function goBack() {
+    document.querySelector(".game-list").style.display = "block";
+    document.querySelector(".minesweeper-game").style.display = "none";
+    document.querySelector(".tic-tac-toe-game").style.display = "none";
+    document.querySelector(".sudoku-game").style.display = "none";
+    document.querySelector(".shop").style.display = "none";
+}
+</script>
+
+</body>
+</html>
